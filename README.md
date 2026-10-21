@@ -14,7 +14,6 @@ The core model is simple: the root agent orchestrates; an implementation agent c
 | `.codex/agents/agentteam-slice-implementer.toml` | Implementation of one complete slice within explicit path boundaries. |
 | `.codex/agents/agentteam-contract-reviewer.toml` | Independent acceptance of the complete diff. |
 | `.agents/skills/agentteam-slice-delivery/` | Slice orchestration, acceptance gates, and plan validator for medium and large requirements. |
-| `.agents/skills/agentteam-capability-delivery/` | Evidence-to-delivery workflow for a single capability family. |
 | `.agents/skills/agentteam-requirements-design/` | Evidence-backed requirements clarification, coding-ready technical design, and readiness gate. |
 | `.agents/skills/agentteam-release-readiness/` | Evidence-backed release readiness assessment and UAT/production closure records. |
 
@@ -33,14 +32,14 @@ The core model is simple: the root agent orchestrates; an implementation agent c
 2. Establish repository facts before editing: fill the target configuration only from current evidence, preserve unknowns as `TODO: <evidence needed>`, and do not infer environment permissions.
 3. Use `$agentteam-requirements-design` when the request or design is incomplete. Do not begin implementation or slice planning while material decisions, contracts, or evidence gaps remain unresolved.
 4. Use `$agentteam-slice-delivery` only for an approved, coding-ready design. Implement one bounded slice, obtain independent read-only acceptance, rerun its critical verification, then let the root agent stage and commit it.
-5. Use `$agentteam-capability-delivery` for one clearly bounded capability family, and `$agentteam-release-readiness` to record a go/no-go decision. Never deploy, publish, or change external systems without explicit authorization.
+5. Use `$agentteam-release-readiness` to record a go/no-go decision. Never deploy, publish, or change external systems without explicit authorization.
 
 ## Detailed workflow
 
 1. Copy or merge `.codex/agents` and `.agents/skills` into the target repository.
 2. Merge the collaboration rules from [AGENTS.md](AGENTS.md) into the target repository and fill its `Target Project Configuration` placeholders with real repository paths, commands, boundaries, environment permissions, and release/rollback entry points. The target repository's own architecture, permission, release, and verification rules always take precedence.
 3. Use `$agentteam-requirements-design` first when requirements or design are incomplete; it produces the approved baseline needed by `$agentteam-slice-delivery`.
-4. Use `$agentteam-slice-delivery` for medium or large approved requirements; use `$agentteam-capability-delivery` for implementation of one clearly bounded capability family.
+4. Use `$agentteam-slice-delivery` for medium or large approved requirements.
 5. Create and validate a slice plan before delegating implementation and independent acceptance. Only a slice with an `ACCEPTED` verdict may be staged and committed by the root agent.
 6. Use `$agentteam-release-readiness` for the final readiness decision. It distinguishes repository-ready from UAT-ready and production-ready; release execution remains separately authorized.
 

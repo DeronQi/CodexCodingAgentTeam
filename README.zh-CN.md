@@ -2,6 +2,8 @@
 
 [English](README.md)
 
+**归档 / 早期实验。** Deron 本人已不再使用这套复杂的多 Agent 技能工作流。大模型和编程 Agent 的能力已经足够，他不再需要它。本仓库作为历史归档保留，并采用 [MIT 许可证](LICENSE)。下面的说明仍然完整，方便仍想试用这套工作流的人。
+
 一个可复制到任意代码仓库中的 Codex 多 Agent 协作资产包。它提供通用交付机制，不携带任何特定仓库的产品、技术栈或目录假设。
 
 核心模型很简单：根 Agent 负责协调；实现 Agent 完成一个边界明确的切片；验收 Agent 以只读方式独立审查完整差异；每个切片都以新的验证和独立提交收尾。
@@ -14,6 +16,7 @@
 | `.codex/agents/agentteam-slice-implementer.toml` | 在明确的路径边界内实现一个完整切片。 |
 | `.codex/agents/agentteam-contract-reviewer.toml` | 对完整差异进行独立验收。 |
 | `.agents/skills/agentteam-slice-delivery/` | 面向中大型需求的切片编排、验收门禁和计划校验器。 |
+| `.agents/skills/agentteam-capability-delivery/` | 单个能力族从证据到交付的工作流。 |
 | `.agents/skills/agentteam-requirements-design/` | 基于证据的需求澄清、可编码技术设计和就绪门禁。 |
 | `.agents/skills/agentteam-release-readiness/` | 基于证据的发布就绪度评估，以及 UAT/生产闭环记录。 |
 
@@ -32,14 +35,14 @@
 2. 编辑前先建立仓库事实：只能依据当前证据填写目标配置；未知项保留为 `TODO: <evidence needed>`；不要推断环境权限。
 3. 当需求或设计不完整时，使用 `$agentteam-requirements-design`。只要存在未解决的关键决策、契约或证据缺口，就不能开始实现或切片规划。
 4. 仅对已批准且可直接编码的设计使用 `$agentteam-slice-delivery`：实现一个边界明确的切片，取得独立的只读验收，重新执行关键验证，然后由根 Agent 暂存并提交。
-5. 使用 `$agentteam-release-readiness` 形成 go/no-go 决策记录。没有明确授权，绝不部署、发布或修改外部系统。
+5. 对一个边界清晰的能力族使用 `$agentteam-capability-delivery`；使用 `$agentteam-release-readiness` 形成 go/no-go 决策记录。没有明确授权，绝不部署、发布或修改外部系统。
 
 ## 详细工作流
 
 1. 复制或合并 `.codex/agents` 和 `.agents/skills` 到目标仓库。
 2. 将 [AGENTS.md](AGENTS.md) 中的协作规则合并到目标仓库，并用真实的仓库路径、命令、边界、环境权限以及发布/回滚入口填写其 `Target Project Configuration` 占位符。目标仓库自己的架构、权限、发布和验证规则始终优先。
 3. 当需求或设计不完整时，先使用 `$agentteam-requirements-design`；它会生成 `$agentteam-slice-delivery` 所需的已批准基线。
-4. 对已批准的中大型需求使用 `$agentteam-slice-delivery`。
+4. 对已批准的中大型需求使用 `$agentteam-slice-delivery`；对一个边界清晰的能力族实现使用 `$agentteam-capability-delivery`。
 5. 在委派实现与独立验收前，创建并校验切片计划。只有获得 `ACCEPTED` 结论的切片，根 Agent 才能暂存和提交。
 6. 对最终就绪度决策使用 `$agentteam-release-readiness`。它会区分仓库就绪、UAT 就绪和生产就绪；实际发布操作仍需单独授权。
 

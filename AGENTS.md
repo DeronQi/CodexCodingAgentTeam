@@ -62,6 +62,7 @@ Use this repository as a reusable Codex AgentTeam asset pack.
 
 - `.codex/agents/`: reusable role definitions.
 - `.agents/skills/agentteam-slice-delivery/`: orchestration, plan contract, acceptance gates, and validator.
+- `.agents/skills/agentteam-capability-delivery/`: evidence-to-delivery workflow for one capability family.
 - `.agents/skills/agentteam-requirements-design/`: requirements clarification and technical design gate.
 - `.agents/skills/agentteam-release-readiness/`: release-readiness evidence and closure.
 

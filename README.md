@@ -2,6 +2,8 @@
 
 [简体中文](README.zh-CN.md)
 
+**Archive / older experiment.** Deron no longer uses this complex multi-agent skill workflow. LLM and coding-agent capabilities have improved enough that he does not need it. This repository is kept as a historical archive under the [MIT License](LICENSE). The instructions below remain for anyone who still wants to try the workflow.
+
 A reusable Codex multi-agent collaboration asset pack that can be copied into any code repository. It provides general delivery mechanisms without carrying product, technology-stack, or directory assumptions from a specific repository.
 
 The core model is simple: the root agent orchestrates; an implementation agent completes one bounded slice; an acceptance agent independently reviews the complete diff in read-only mode; each slice closes with fresh verification and a separate commit.

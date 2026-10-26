@@ -1,60 +1,51 @@
-# CodexCodingAgentTeam
+# Codex Delivery Workflow
 
 [English](README.md)
 
-**归档 / 早期实验。** Deron 本人已不再使用这套复杂的多 Agent 技能工作流。大模型和编程 Agent 的能力已经足够，他不再需要它。本仓库作为历史归档保留，并采用 [MIT 许可证](LICENSE)。下面的说明仍然完整，方便仍想试用这套工作流的人。
+一套以完整业务结果为目标的轻量 Codex 工作流。主 Agent 持续负责探索、必要设计、实现、集成和验证；只有独立上下文、真正可并行的工作、隔离实现或审查能带来收益时，才使用子 Agent。
 
-一个可复制到任意代码仓库中的 Codex 多 Agent 协作资产包。它提供通用交付机制，不携带任何特定仓库的产品、技术栈或目录假设。
+本版本完整替换早期 AgentTeam 实验：旧 skill、固定角色链、切片计划格式、格式门禁和重复模板已删除，不保留兼容别名或适配层。历史版本保留在 Git 中。采用 [MIT 许可证](LICENSE)。
 
-核心模型很简单：根 Agent 负责协调；实现 Agent 完成一个边界明确的切片；验收 Agent 以只读方式独立审查完整差异；每个切片都以新的验证和独立提交收尾。
+## 选择入口
 
-## 资产清单
-
-| 资产 | 用途 |
+| Skill | 适用任务 |
 | --- | --- |
-| `.codex/agents/agentteam-evidence-explorer.toml` | 以只读方式梳理需求、代码、数据、行为、测试和验证证据。 |
-| `.codex/agents/agentteam-slice-implementer.toml` | 在明确的路径边界内实现一个完整切片。 |
-| `.codex/agents/agentteam-contract-reviewer.toml` | 对完整差异进行独立验收。 |
-| `.agents/skills/agentteam-slice-delivery/` | 面向中大型需求的切片编排、验收门禁和计划校验器。 |
-| `.agents/skills/agentteam-capability-delivery/` | 单个能力族从证据到交付的工作流。 |
-| `.agents/skills/agentteam-requirements-design/` | 基于证据的需求澄清、可编码技术设计和就绪门禁。 |
-| `.agents/skills/agentteam-release-readiness/` | 基于证据的发布就绪度评估，以及 UAT/生产闭环记录。 |
+| [software-delivery](.agents/skills/software-delivery/SKILL.md) | 实现或修复一项能力，贯通端到端验收；普通开发的默认入口。 |
+| [requirements-design](.agents/skills/requirements-design/SKILL.md) | 仅设计任务，以及重要产品行为、架构或契约决策；复用已有合格文档。 |
+| [release-readiness](.agents/skills/release-readiness/SKILL.md) | 评估明确的发布候选，分别记录仓库验证、部署前条件、实际部署和业务验收。 |
 
-## 快速开始
+明确的小修复可直接实现和验证，无需新增计划文档或子 Agent。大型工作可以按可独立验收的结果列出简短计划，无需为每个内部步骤安排专门实现角色或单独提交。
 
-### 给人类
+## 在目标仓库使用
 
-1. 将 `.codex/agents`、`.agents/skills`、`templates` 和 [AGENTS.md](AGENTS.md) 中的协作规则复制或合并到目标仓库。不要覆盖目标仓库已有的专属说明。
-2. 在 Codex 中打开目标仓库，并要求它遵循[引导提示词](templates/codex-bootstrap-prompt.md)。它会先梳理仓库、根据证据填写目标配置，并把未知项保留为 `TODO: <evidence needed>`。
-3. 对中大型改动，在开始实现前审阅并确认分别产出的需求和技术设计；随后使用切片计划跟踪实现、独立验收、验证，以及每个已验收切片的一次提交。
-4. 若需要发布决策，使用发布就绪度技能，并分别审阅仓库、UAT 和生产证据。部署仍必须获得明确授权。
+1. 先读取目标仓库自己的说明。将所需 skill 文件夹及其资源完整复制到目标 `.agents/skills/`；每个 skill 都可独立使用。
+2. 需要独立审查时，可将 [delivery-reviewer.toml](.codex/agents/delivery-reviewer.toml) 复制到 `.codex/agents/`。也可使用内置角色；本包不设置模型、线程数、沙箱策略或 Goal 开关。
+3. 从 [AGENTS.md](AGENTS.md) 中合并适用规则，保留目标仓库的架构、权限和发布约束。按任务需要查明真实路径与命令，不要求先完成全仓库配置表。
+4. 给出结果与验收条件，例如：`使用 $software-delivery 修复保存流程，并验证相关成功与失败路径。`
 
-### 给 Codex Agent
+模板只保留在所属 skill 的 `assets/` 中，按需使用，不为填模板而创建文档。角色中的只读指令属于行为约束，不提供独立沙箱隔离。
 
-1. 先读取目标仓库的 `AGENTS.md`，再读取本资产包的 [AGENTS.md](AGENTS.md)；始终以目标仓库规则为准。
-2. 编辑前先建立仓库事实：只能依据当前证据填写目标配置；未知项保留为 `TODO: <evidence needed>`；不要推断环境权限。
-3. 当需求或设计不完整时，使用 `$agentteam-requirements-design`。只要存在未解决的关键决策、契约或证据缺口，就不能开始实现或切片规划。
-4. 仅对已批准且可直接编码的设计使用 `$agentteam-slice-delivery`：实现一个边界明确的切片，取得独立的只读验收，重新执行关键验证，然后由根 Agent 暂存并提交。
-5. 对一个边界清晰的能力族使用 `$agentteam-capability-delivery`；使用 `$agentteam-release-readiness` 形成 go/no-go 决策记录。没有明确授权，绝不部署、发布或修改外部系统。
+## 交付原则
 
-## 详细工作流
+- 尽早贯通最小可运行链路，再补齐必要行为与有意义的失败验证。
+- 按独立任务委派，不按组织结构建立常驻 Agent。每个工作树保持单一写入者，并考虑共享运行状态。
+- 重要风险或明确要求时进行独立审查，覆盖新增文件并区分用户原有改动；结论绑定实际审查内容。
+- 相关代码或差异、配置、环境和数据假设未变化时复用证据。主 Agent 完成最终关键检查，无需每个角色重复执行所有测试。
+- 仅在恢复或交接需要时维护简短检查点；有实质变化才更新，原始证据存入产物，常规状态随工作批量提交。
+- 外部证据缺口只阻塞依赖它的工作或结论。部署和线上修改需要明确授权；本地测试不能证明生产验收通过。
 
-1. 复制或合并 `.codex/agents` 和 `.agents/skills` 到目标仓库。
-2. 将 [AGENTS.md](AGENTS.md) 中的协作规则合并到目标仓库，并用真实的仓库路径、命令、边界、环境权限以及发布/回滚入口填写其 `Target Project Configuration` 占位符。目标仓库自己的架构、权限、发布和验证规则始终优先。
-3. 当需求或设计不完整时，先使用 `$agentteam-requirements-design`；它会生成 `$agentteam-slice-delivery` 所需的已批准基线。
-4. 对已批准的中大型需求使用 `$agentteam-slice-delivery`；对一个边界清晰的能力族实现使用 `$agentteam-capability-delivery`。
-5. 在委派实现与独立验收前，创建并校验切片计划。只有获得 `ACCEPTED` 结论的切片，根 Agent 才能暂存和提交。
-6. 对最终就绪度决策使用 `$agentteam-release-readiness`。它会区分仓库就绪、UAT 就绪和生产就绪；实际发布操作仍需单独授权。
+## 验证资产包
 
-## 使用 Codex 引导
+需要 Python 3.11+ 及开发依赖。在仓库根目录运行：
 
-让 Codex 读取 [templates/codex-bootstrap-prompt.md](templates/codex-bootstrap-prompt.md)，并在目标仓库中执行其中的提示词。该提示词会引导 Codex 完成基于证据的需求澄清、技术设计、就绪门禁，并且只有在此之后才进入切片规划。
-
-资产包内的占位符格式为 `{{UPPER_SNAKE_CASE}}`。Codex 只能用仓库证据替换它们；否则必须保留 `TODO: <evidence needed>`，并报告阻塞问题或闭环事项。
-
-```powershell
-pwsh .agents/skills/agentteam-requirements-design/scripts/validate-design-readiness.ps1 -RequirementsPath docs/requirements/my-capability.md -DesignPath docs/design/my-capability.md
-pwsh .agents/skills/agentteam-slice-delivery/scripts/validate-slice-plan.ps1 -Path docs/plans/my-slice-plan.md
+```sh
+python -m pip install -r requirements-dev.txt
+python scripts/check_pack.py
+python -m unittest discover -s tests -v
 ```
 
-这是工作流资产包，不是项目模板或发布工具。它不能替代目标仓库的 `AGENTS.md`，也不会授予部署、发布、修改数据库或写入外部系统的权限。
+独立复制后的 skill 可用 `python scripts/check_pack.py --skill /path/to/software-delivery` 检查。
+
+检查器只验证打包、元数据和本地资源链接，不判断设计语义、不授予操作权限，也不证明业务验收。[行为评估案例](tests/scenarios.md)覆盖任务分流、证据复用、外部阻塞和协调行为。本次重构的[需求](docs/requirements.md)与[设计](docs/design.md)分别记录变更依据。
+
+后续应在相同条件下比较每个已验收结果的成本与时间、首次端到端通过时间，以及返工和回归。本版本不声称已经测得 token 节省或交付提速。

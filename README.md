@@ -1,60 +1,51 @@
-# CodexCodingAgentTeam
+# Codex Delivery Workflow
 
 [简体中文](README.zh-CN.md)
 
-**Archive / older experiment.** Deron no longer uses this complex multi-agent skill workflow. LLM and coding-agent capabilities have improved enough that he does not need it. This repository is kept as a historical archive under the [MIT License](LICENSE). The instructions below remain for anyone who still wants to try the workflow.
+A small Codex workflow pack for completing observable software outcomes. One main agent owns exploration, necessary design, implementation, integration, and verification. Use subagents only when independent context, parallel work, isolated ownership, or review adds value.
 
-A reusable Codex multi-agent collaboration asset pack that can be copied into any code repository. It provides general delivery mechanisms without carrying product, technology-stack, or directory assumptions from a specific repository.
+This replaces the historical AgentTeam experiment. The former skills, role graph, slice-plan formats, validators, and duplicate templates have been removed. There are no compatibility aliases or migration adapters. Historical versions remain in Git. [MIT License](LICENSE).
 
-The core model is simple: the root agent orchestrates; an implementation agent completes one bounded slice; an acceptance agent independently reviews the complete diff in read-only mode; each slice closes with fresh verification and a separate commit.
+## Choose a skill
 
-## Contents
-
-| Asset | Purpose |
+| Skill | Use it for |
 | --- | --- |
-| `.codex/agents/agentteam-evidence-explorer.toml` | Read-only mapping of requirements, code, data, behavior, tests, and verification evidence. |
-| `.codex/agents/agentteam-slice-implementer.toml` | Implementation of one complete slice within explicit path boundaries. |
-| `.codex/agents/agentteam-contract-reviewer.toml` | Independent acceptance of the complete diff. |
-| `.agents/skills/agentteam-slice-delivery/` | Slice orchestration, acceptance gates, and plan validator for medium and large requirements. |
-| `.agents/skills/agentteam-capability-delivery/` | Evidence-to-delivery workflow for a single capability family. |
-| `.agents/skills/agentteam-requirements-design/` | Evidence-backed requirements clarification, coding-ready technical design, and readiness gate. |
-| `.agents/skills/agentteam-release-readiness/` | Evidence-backed release readiness assessment and UAT/production closure records. |
+| [software-delivery](.agents/skills/software-delivery/SKILL.md) | Implementing or fixing a capability through its end-to-end acceptance. Default for ordinary development. |
+| [requirements-design](.agents/skills/requirements-design/SKILL.md) | Design-only work and material product, architecture, or contract decisions. Reuse adequate existing documents. |
+| [release-readiness](.agents/skills/release-readiness/SKILL.md) | Assessing the exact release candidate and separating repository checks, prerequisites, deployment, and business acceptance. |
 
-## Quick start
+A clear small fix can be completed directly without a new planning document or agent. Large work may use a short plan of independently useful outcomes; it does not require a dedicated implementer or a commit for each internal step.
 
-### For people
+## Use in a repository
 
-1. Copy or merge `.codex/agents`, `.agents/skills`, `templates`, and the collaboration rules in [AGENTS.md](AGENTS.md) into the target repository. Do not overwrite target-specific instructions.
-2. Open the target repository in Codex and ask it to follow [the bootstrap prompt](templates/codex-bootstrap-prompt.md). It first maps the repository, fills the target configuration from evidence, and records unknowns as `TODO: <evidence needed>`.
-3. For a medium or large change, review and approve the separately produced requirements and technical design before implementation starts. Then use the slice plan to track implementation, independent acceptance, verification, and one commit per accepted slice.
-4. For a release decision, use the release-readiness skill and review its separate repository, UAT, and production evidence. Deployment still needs explicit authorization.
+1. Read the target repository's own instructions. Copy the needed folders from `.agents/skills/` into its `.agents/skills/`, with their resources intact. Each skill is independently usable.
+2. Optionally copy [delivery-reviewer.toml](.codex/agents/delivery-reviewer.toml) into `.codex/agents/` for independent review. The built-in agents remain usable; this pack does not set models, thread limits, sandbox policies, or Goals.
+3. Merge relevant workflow guidance from [AGENTS.md](AGENTS.md), preserving the target's architecture, authority, permissions, and release rules. Discover commands and paths from actual evidence as needed; no full-profile bootstrap is required.
+4. Ask for the outcome and acceptance, for example: `Use $software-delivery to fix the failing save workflow and verify the affected success and failure paths.`
 
-### For Codex agents
+Skill templates live only under their owning skill's `assets/`. Adapt them when useful; do not create documents just to fill a template. Role instructions request behavior and do not create an independent read-only sandbox.
 
-1. Read the target repository's `AGENTS.md` first, then this asset pack's [AGENTS.md](AGENTS.md); target-repository rules always win.
-2. Establish repository facts before editing: fill the target configuration only from current evidence, preserve unknowns as `TODO: <evidence needed>`, and do not infer environment permissions.
-3. Use `$agentteam-requirements-design` when the request or design is incomplete. Do not begin implementation or slice planning while material decisions, contracts, or evidence gaps remain unresolved.
-4. Use `$agentteam-slice-delivery` only for an approved, coding-ready design. Implement one bounded slice, obtain independent read-only acceptance, rerun its critical verification, then let the root agent stage and commit it.
-5. Use `$agentteam-capability-delivery` for one clearly bounded capability family, and `$agentteam-release-readiness` to record a go/no-go decision. Never deploy, publish, or change external systems without explicit authorization.
+## Delivery discipline
 
-## Detailed workflow
+- Integrate the smallest runnable end-to-end path early, then finish required behavior and meaningful failure checks.
+- Delegate bounded independent tasks rather than copying an organization chart into agents. Keep one writer per worktree and account for shared runtime state.
+- Use independent review for consequential risk or when required. Include new files and distinguish the user's pre-existing changes. Acceptance applies to the actual reviewed content.
+- Reuse evidence while relevant code/diff, configuration, environment, and data assumptions hold. The main agent performs the final critical check; avoid automatically running every suite in every role.
+- Keep a short checkpoint only for useful recovery/handoff. Update on material events; store raw evidence in artifacts and batch routine status updates with the work.
+- Missing external evidence blocks dependent work or claims only. Deployment and live mutations require explicit authority; local tests do not prove production acceptance.
 
-1. Copy or merge `.codex/agents` and `.agents/skills` into the target repository.
-2. Merge the collaboration rules from [AGENTS.md](AGENTS.md) into the target repository and fill its `Target Project Configuration` placeholders with real repository paths, commands, boundaries, environment permissions, and release/rollback entry points. The target repository's own architecture, permission, release, and verification rules always take precedence.
-3. Use `$agentteam-requirements-design` first when requirements or design are incomplete; it produces the approved baseline needed by `$agentteam-slice-delivery`.
-4. Use `$agentteam-slice-delivery` for medium or large approved requirements; use `$agentteam-capability-delivery` for implementation of one clearly bounded capability family.
-5. Create and validate a slice plan before delegating implementation and independent acceptance. Only a slice with an `ACCEPTED` verdict may be staged and committed by the root agent.
-6. Use `$agentteam-release-readiness` for the final readiness decision. It distinguishes repository-ready from UAT-ready and production-ready; release execution remains separately authorized.
+## Check the pack
 
-## Bootstrap with Codex
+Requires Python 3.11+ and the development dependencies. From the repository root:
 
-Ask Codex to read [templates/codex-bootstrap-prompt.md](templates/codex-bootstrap-prompt.md) and execute it in the target repository. The prompt directs Codex through evidence-backed requirements clarification, technical design, the readiness gate, and only then slice planning.
-
-The included placeholders use `{{UPPER_SNAKE_CASE}}`. Codex must replace them only from repository evidence; otherwise it must leave `TODO: <evidence needed>` and report the blocking question or closure item.
-
-```powershell
-pwsh .agents/skills/agentteam-requirements-design/scripts/validate-design-readiness.ps1 -RequirementsPath docs/requirements/my-capability.md -DesignPath docs/design/my-capability.md
-pwsh .agents/skills/agentteam-slice-delivery/scripts/validate-slice-plan.ps1 -Path docs/plans/my-slice-plan.md
+```sh
+python -m pip install -r requirements-dev.txt
+python scripts/check_pack.py
+python -m unittest discover -s tests -v
 ```
 
-This is a workflow asset pack, not a project template or release tool. It does not replace a target repository's `AGENTS.md` and does not grant permission to deploy, publish, change databases, or write to external systems.
+To check a separately copied skill: `python scripts/check_pack.py --skill /path/to/software-delivery`.
+
+The checker validates packaging, metadata, and local resource links. It does not judge design semantics, authorize operations, or establish business acceptance. [Behavioral evaluation cases](tests/scenarios.md) cover task routing, evidence reuse, external gaps, and coordination behavior. [Requirements](docs/requirements.md) and [design](docs/design.md) explain this replacement.
+
+Measure future workflow changes by cost/time per accepted outcome, first end-to-end pass, and rework/regressions under matched conditions. This revision does not claim measured token savings or delivery speedups.

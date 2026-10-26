@@ -1,0 +1,4 @@
+interface:
+  display_name: "Software Delivery"
+  short_description: "Deliver a verified end-to-end capability."
+  default_prompt: "Use $software-delivery to complete this capability with relevant verification and a cohesive commit."

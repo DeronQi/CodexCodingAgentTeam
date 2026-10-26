@@ -1,0 +1,4 @@
+interface:
+  display_name: "Requirements and Design"
+  short_description: "Resolve material requirements and design."
+  default_prompt: "Use $requirements-design to clarify this change and produce an implementable design."

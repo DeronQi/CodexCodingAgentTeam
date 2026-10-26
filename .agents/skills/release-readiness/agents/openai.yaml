@@ -1,0 +1,4 @@
+interface:
+  display_name: "Release Readiness"
+  short_description: "Assess release stages with current evidence."
+  default_prompt: "Use $release-readiness to assess this candidate and identify the supported release stage."

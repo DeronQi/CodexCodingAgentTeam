@@ -1,69 +1,36 @@
-# CodexCodingAgentTeam
+# Codex Delivery Workflow
 
-Use this repository as a reusable Codex AgentTeam asset pack.
+## Repository facts
 
-## Target Project Configuration
+This repository authors reusable Codex instructions and skills; it is not an application or deployment tool. The primary branch is `main`. Skills and their single-source resources live in `.agents/skills/`; the optional reviewer is in `.codex/agents/`. Requirements and design for this replacement live in `docs/`. Package checks are in `scripts/`, and tests/evaluation cases are in `tests/`.
 
-> When copying these assets into a real project, fill this section from the project itself. Keep unknown items as `TODO: <evidence needed>`; do not invent commands, paths, environments, or permissions. The target project's existing rules override this pack.
+Use Python 3.11+ with `requirements-dev.txt`. Run `python scripts/check_pack.py` and `python -m unittest discover -s tests -v`. There is no application build, database, UAT environment, or production release in this pack. No repository task grants permission to change another repository, user-level configuration, or an external system.
 
-- Project name and purpose: {{PROJECT_NAME_AND_PURPOSE}}
-- Repository root and primary branch: {{REPOSITORY_ROOT}}; {{PRIMARY_BRANCH}}
-- Primary languages, frameworks, and build runtime: {{TECHNOLOGY_BASELINE}}
-- Source roots and architecture boundaries: {{SOURCE_ROOTS_AND_BOUNDARIES}}
-- Test roots and test categories: {{TEST_ROOTS_AND_CATEGORIES}}
-- Configuration, schema, and infrastructure roots: {{CONFIG_SCHEMA_INFRA_ROOTS}}
-- Active documentation roots and ownership rules: {{DOCUMENTATION_ROOTS_AND_OWNERSHIP}}
-- Archived/reference material policy: {{ARCHIVE_REFERENCE_POLICY}}
-- Standard build command: {{BUILD_COMMAND}}
-- Targeted test command pattern: {{TARGETED_TEST_COMMAND_PATTERN}}
-- Integration, runtime, database, UI, package, and architecture checks: {{ADDITIONAL_VERIFICATION_COMMANDS}}
-- Git/commit convention and protected paths: {{GIT_CONVENTION_AND_PROTECTED_PATHS}}
-- Environments and mutation permissions: {{ENVIRONMENTS_AND_MUTATION_PERMISSIONS}}
-- Release runbooks, readiness checks, and rollback procedure: {{RELEASE_ENTRY_POINTS_AND_ROLLBACK}}
-- Sensitive paths, secret policy, and redaction rules: {{SENSITIVE_DATA_POLICY}}
+All rules in this file must be written in English. Preserve unrelated work and inspect status before edits and staging. Unless the user requests otherwise, commit cohesive verified changes; batch routine status updates with the work. Do not create progress-only commits.
 
-## Team roles
+## Choose the smallest sufficient route
 
-- Root agent: own scope, planning, delegation, final verification, staging, and commits.
-- Evidence explorer: read-only evidence mapping.
-- Slice implementer: edit one bounded slice; never stage or commit.
-- Contract reviewer: read-only independent acceptance.
+- For a small, clear fix, implement directly, verify affected behavior, inspect the delta, and commit when authorized. No new planning document or subagent is required.
+- For an ordinary capability, the main agent owns exploration, necessary design, implementation, integration, and acceptance. Use `software-delivery`. Reuse current sources and resolve reversible technical choices without another approval round.
+- For design-only work or material product, architecture, or contract uncertainty, use `requirements-design`. Keep requirements and technical design separate; resolve implementation blockers before dependent code. Continue implementation only when already authorized.
+- For large work, use a short outcome-based plan and dependency order. Keep one continuous owner rather than a fixed agent per layer. Use `release-readiness` only for a release decision or authorized release work.
 
-## Collaboration rules
+## Delegate selectively
 
-1. Read and fill the target-project configuration above, then read the target repository's existing `AGENTS.md`; its rules win.
-2. Keep one writer per worktree. Parallelize only independent read-only work or isolated worktrees with disjoint files and state.
-3. Use an approved slice plan for medium or large work; use positive allowed paths and hard excluded paths.
-4. Require independent reviewer acceptance before staging an implementation slice.
-5. Rerun the narrow critical verification after acceptance and before commit.
-6. Never infer permission to deploy, publish, change a database, or mutate another live system.
-7. Preserve unrelated changes and inspect status before editing and staging.
+Use subagents when a bounded independent context, parallel investigation, isolated implementation, or independent review materially improves the result. Prefer batching independent tool operations in the main loop first. Give each delegated task a specific result, necessary context, path/state ownership, permissions, and stopping condition; return compact findings and artifact links.
 
-## Bootstrap a target repository
+Keep one writer per worktree. Isolated writers must also avoid shared runtime/database/port/output state. The main agent owns integration, staging, and commits; delegated writers do not stage or commit. Use the optional `delivery-reviewer`, another available reviewer, or a suitable independent agent for material correctness/authorization/persistence/compatibility risk and when review is explicitly required. Role instructions are behavioral limits, not independent permission sandboxes.
 
-1. Read this file and the target repository's existing `AGENTS.md`.
-2. Fill `Target Project Configuration` from current paths, scripts, configuration, and runbooks before using the team workflow.
-3. Read `README.md` and `templates/codex-bootstrap-prompt.md` from this asset pack.
-4. Copy `templates/repository-delivery-profile.template.md` into the target repository's documentation location (or use the repository's equivalent) and fill all `{{PLACEHOLDER}}` values from evidence.
-5. Keep an unknown value as `TODO: <evidence needed>`; do not fabricate a repository convention, runtime boundary, permission, or verification command.
-6. Copy `templates/implementation-slice-plan.template.md` when a durable delivery plan is needed. Do not delegate a slice that has material unresolved placeholders.
+Do not require a fixed team, mandatory agent handoffs, a Goal tool, or a commit per internal step. Honor actual tool availability, invocation conditions, and higher-priority authorization rules. If a required review or check is unavailable, report that limit and do not claim it occurred.
 
-## Required delivery sequence
+## Evidence, state, and completion
 
-1. Clarify the requested outcome from repository evidence and create separate requirements.
-2. Create a coding-ready technical design with requirement traceability, boundaries, contracts, state/error/auth/audit behavior, and verification strategy.
-3. Resolve or explicitly block material decisions and external evidence gaps.
-4. Split only the approved design into vertically complete delivery slices.
-5. Implement one slice, independently accept the complete diff, run fresh root verification, and commit only the accepted slice.
-6. Finish with an explicit closure slice when UAT, infrastructure, packaging, or production evidence cannot be proven by repository tests.
-7. Record material design choices in a decision record, contract changes in an interface contract, and release evidence in a release record. Do not claim an environment state without current evidence.
+Define observable completion and integrate the smallest runnable end-to-end path early. Passing local tests does not establish external runtime, deployment, or business acceptance. Missing evidence blocks dependent work or claims only. Never infer authority to deploy, publish, change grants, or mutate live data.
 
-## Included assets
+Reuse verification while its relevant code/diff, configuration, environment, and data assumptions remain valid. Recheck affected evidence after those inputs change. Independent reviews cover the actual task delta, including new files and pre-existing worktree changes; acceptance binds to that content and expires after material changes. The main agent performs the final critical check before committing without rerunning every suite by default.
 
-- `.codex/agents/`: reusable role definitions.
-- `.agents/skills/agentteam-slice-delivery/`: orchestration, plan contract, acceptance gates, and validator.
-- `.agents/skills/agentteam-capability-delivery/`: evidence-to-delivery workflow for one capability family.
-- `.agents/skills/agentteam-requirements-design/`: requirements clarification and technical design gate.
-- `.agents/skills/agentteam-release-readiness/`: release-readiness evidence and closure.
+Maintain a short checkpoint only when recovery or handoff needs it. Update on meaningful decisions, completed acceptance, new blockers, or handoff. Reference original artifacts instead of copying logs. Do not poll, wake agents, or edit status merely to restate unchanged progress; honor a user-requested reporting cadence. Report working outcomes, verification, commit, and material limits.
 
-Copy the asset folders into a target repository, fill `Target Project Configuration`, and merge these rules into its `AGENTS.md`; never overwrite target-specific authority, architecture, release, or verification rules.
+## Using these assets elsewhere
+
+Copy the needed skill folders with their resources, and optionally the reviewer role. Read the target repository's own instructions first. Merge only relevant workflow rules; never replace its authority, architecture, permission, or release rules. Discover actual commands and paths from that repository as needed; retain consequential unknowns explicitly. No full repository-profile bootstrap is required before a bounded task.

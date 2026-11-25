@@ -5,6 +5,7 @@ Use only for a useful handoff or recovery. Keep the current state here; preserve
 - Outcome and acceptance:
 - Scope, exclusions, and permissions:
 - Current branch/worktree; baseline changes to preserve:
+- Active worktrees/branches, shared-file contract, resumable worker IDs, and review round status:
 - Working result and completed checks:
 - Evidence locations and identity: code/diff, configuration, environment/time, data snapshot where relevant:
 - Current step and next concrete action:

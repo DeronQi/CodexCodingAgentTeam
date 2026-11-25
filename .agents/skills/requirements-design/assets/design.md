@@ -10,11 +10,11 @@ Adapt to the repository. Cover material requirements and risks; do not fill irre
 
 ## Execution path and contracts
 
-Describe the end-to-end flow, affected interfaces/consumers, validation, authorization/scope, and errors. Include data ownership, state/transactions, idempotency, concurrency, retry/cancellation, recovery, and audit only where relevant.
+Describe the end-to-end flow, affected interfaces/consumers, validation, authorization/scope, and errors. Where relevant, capture verified operational baseline facts (global middleware or interceptors, CI/release allowlists, config/schema bootstrap behavior, and target-environment routing, auth, or ingress) and include data ownership, state/transactions, idempotency, concurrency, retry/cancellation, recovery, and audit.
 
 ## Decisions and verification
 
-Record consequential choices, trade-offs, affected compatibility, and the smallest runnable path. Identify concrete tests/runtime/UI/package checks and the evidence they establish.
+Record consequential choices, trade-offs, affected compatibility, and the smallest runnable path. Identify concrete tests/runtime/UI/package checks and the evidence they establish. When parallel worktrees are planned, add a brief **Shared-file boundaries** note defining minimal non-overlapping anchors in shared hotspot files.
 
 ## Remaining boundaries
 

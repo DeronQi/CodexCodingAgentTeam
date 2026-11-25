@@ -4,17 +4,19 @@
 
 | Requirement | Implementation | Verification |
 | --- | --- | --- |
-| FR-001 | Three task routes in AGENTS.md and focused skill descriptions; root performs normal implementation | Small-fix and design-only behavioral cases |
-| FR-002 | Conditional delegation guidance and one optional delivery-reviewer role | Investigation, review, and isolated-writer cases |
+| FR-001 | Proportional routes in AGENTS.md and focused skill descriptions, plus optional coordinated mode for parallel/high-risk work | Small-fix, design-only, and parallel worktree behavioral cases |
+| FR-002 | Agent-/model-agnostic delegation, honest routing, shared-file contracts, and isolation-scoped commit ownership | Investigation, parallel worktree, routing-limit, and isolated-writer cases |
 | FR-003 | Optional checkpoint and evidence record; event-triggered updates and evidence invalidation rules | Existing-evidence and unchanged-blocker cases |
-| FR-004 | Observable acceptance, scoped external blockers, permissions inherited from parent | External-gate and authorization cases |
+| FR-004 | Observable acceptance, operational baseline inspection, tiered review/rework with severity gating, and sandbox honesty | External-gate, authorization, and multi-round review cases |
 | FR-005 | software-delivery, requirements-design, release-readiness; resources owned inside each skill | Independent-copy and resource-integrity tests |
 | FR-006 | Python package checker, unittest negative tests, and bounded independent forward testing | Package tests and evaluator results |
 
 ## Boundaries and contracts
 
-- The main agent chooses a proportional route, owns integration, and stages/commits the verified task. Optional subagents receive an outcome, context, allowed paths/state, permissions, and return compact findings or artifacts. They never acquire authority from a handoff.
-- Separate requirements and design remain useful when decisions are material. No script can approve their semantics. Existing repository documents take precedence over bundled examples; no exact headings or slice statuses are imposed.
+- The workflow stays coding-agent- and model-agnostic: roles are defined by capability (coordinator, isolated implementer, independent reviewer) without binding to specific tools or model families. If a requested agent, model, or reasoning tier cannot be routed explicitly, the coordinator reports that limit rather than silently substituting another.
+- The main agent chooses a proportional route, owns main-branch integration, conflict resolution, post-merge verification, and worktree/branch cleanup. Delegated writers in a shared worktree never stage or commit; delegated implementers in dedicated isolated `git worktree` checkouts may commit cohesive local changes to their own feature branches under a coordinator-defined shared-file contract.
+- Separate requirements and design remain useful when decisions are material, backed by read-only operational baseline checks (global middleware, CI/release allowlists, config/schema bootstrap, environment routing/auth) and optional pre-coding design cross-review before freezing a baseline. No script can approve their semantics. Existing repository documents take precedence over bundled examples; no exact headings or slice statuses are imposed.
+- Tiered review classifies findings as `BLOCKING`, `MAJOR`, or `MINOR` (or `NO_ISSUES`). The coordinator triages findings and triggers resumable rework only for `BLOCKING`/`MAJOR` defects up to a bounded round cap (escalating persistent blockers), using full-delta review on Round 1 and targeted incremental re-review on Round 2+ unless architecture changes broadly. Prefer runtime-enforced read-only isolation for reviewers and workspace-scoped sandboxes for implementers.
 - Skills are self-contained folders with YAML metadata, optional assets/references, and UI metadata. Only the optional reviewer uses a standalone TOML agent definition. No config.toml, aliases, migration adapters, or duplicated root templates are shipped.
 - Checkpoints are optional working artifacts, updated on changed decisions, completed acceptance, new blockers, or handoff. Evidence records bind commands/results to the relevant code/diff, configuration, environment/time, and data snapshot. Review also covers new files and distinguishes pre-existing changes; materially changed reviewed content invalidates acceptance.
 - Release records separate repository verification, deployment prerequisites, execution, and business acceptance. Absent external evidence limits the corresponding claim and does not block unrelated local work.

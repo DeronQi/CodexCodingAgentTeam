@@ -27,10 +27,10 @@ Skill templates live only under their owning skill's `assets/`. Adapt them when 
 
 ## Delivery discipline
 
-- Integrate the smallest runnable end-to-end path early, then finish required behavior and meaningful failure checks. For consequential changes, inspect global middleware, CI/release allowlists, config/schema bootstrap, and environment routing before freezing design.
-- Delegate bounded independent tasks rather than copying an organization chart into agents. Keep one writer per worktree, coordinate shared runtime state, and define shared-file contracts before parallel worktrees diverge.
-- Keep commit ownership aligned with isolation: delegated writers in a shared worktree do not stage or commit; implementers in dedicated isolated worktrees may commit to their feature branches, while the coordinator owns main-branch integration and cleanup.
-- Use independent review (and complementary perspectives when available) for consequential risk or when required. Triage findings before rework, gate rework on `BLOCKING`/`MAJOR` defects with resumable sessions and bounded rounds, and use incremental re-review on follow-up rounds.
+- Integrate the smallest runnable end-to-end path early, then finish required behavior and meaningful failure checks. For consequential changes, inspect global middleware, CI/release allowlists, config/schema bootstrap, and environment routing where relevant before freezing design.
+- Delegate bounded independent tasks rather than copying an organization chart into agents. Keep one writer per worktree, coordinate shared runtime state, verify dependent uncommitted inputs before branching isolated worktrees, and define shared-file contracts before parallel worktrees diverge.
+- Keep commit ownership aligned with isolation: delegated writers in a shared worktree do not stage or commit; implementers in dedicated isolated worktrees may commit to their feature branches, while the coordinator owns integration into the target branch and verified cleanup.
+- Use independent review (and complementary perspectives when available) for consequential risk or when required. Triage findings before rework, gate rework on `BLOCKING`/`MAJOR` defects with resumable sessions and bounded rounds (escalating unresolved `BLOCKING` or `MAJOR` findings at the cap), and use incremental re-review on follow-up rounds.
 - Report upfront if a user-requested coding agent, model, or reasoning tier cannot be targeted explicitly; never silently substitute another.
 - Reuse evidence while relevant code/diff, configuration, environment, and data assumptions hold. The coordinator performs the final critical check (plus available UI/smoke checks after merge) without automatically running every suite in every role.
 - Keep a short checkpoint only for useful recovery/handoff. Update on material events; store raw evidence in artifacts and batch routine status updates with the work.
